@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "732998280733",
+    "project_id": "kursach-android",
+    "storage_bucket": "kursach-android.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732998280733:android:ac4a05bdd3860566ae48f4",
+        "android_client_info": {
+          "package_name": "com.example.kursach"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwkfv_uGd3h60TgQsK5ln4s_P78x7iwKM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
