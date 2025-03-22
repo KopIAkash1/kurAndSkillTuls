@@ -3,4 +3,9 @@
     <string name="register_text">Регистрация</string>
     <string name="login_text">Авторизация</string>
     <string name="profile_text">Профиль</string>
+    <string name="friends">Друзья</string>
+    <string name="profile">Профиль</string>
+    <string name="main">Главная</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
