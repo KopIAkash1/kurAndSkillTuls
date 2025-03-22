@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
-    tools:context=".RegisterActivity">
+    tools:context=".LoginActivity">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:text="Регистрация"
+        android:text="Авторизация"
         android:textColor="@color/black"
         android:textSize="25sp"/>
     <com.google.android.material.textfield.TextInputLayout
@@ -45,8 +45,8 @@
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
     <Button
-        android:text="Регистрация"
-        android:id="@+id/register_btn"
+        android:text="Авторизация"
+        android:id="@+id/login_btn"
         android:layout_below="@id/passwordTIL"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
@@ -57,9 +57,9 @@
         android:id="@+id/haveAccount_tw"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Уже есть аккаунт? Авторизация"
+        android:text="Еще нет аккаунта? Регистрация"
         android:textAlignment="center"
-        android:layout_below="@id/register_btn"
+        android:layout_below="@id/login_btn"
         android:layout_marginTop="30dp"
         android:textColor="@color/black"/>
 </RelativeLayout>

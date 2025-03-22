@@ -3,11 +3,9 @@ package com.example.kursach;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,31 +24,38 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class RegisterActivity extends AppCompatActivity {
-
+public class LoginActivity extends AppCompatActivity {
     EditText mEmailET, mPassET;
-    Button mRegisterBtn;
+    TextView mNotHaveAccountTV;
+    Button loginButton;
     ProgressDialog progressDialog;
-    TextView mHaveAccountTV;
     private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_login);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("Регистрация");
+            actionBar.setTitle("Авторизация");
         }
 
         mEmailET = findViewById(R.id.emailEt);
         mPassET = findViewById(R.id.passwordEt);
-        mRegisterBtn = findViewById(R.id.register_btn);
-        mHaveAccountTV = findViewById(R.id.haveAccount_tw);
+        loginButton = findViewById(R.id.login_btn);
+        mNotHaveAccountTV = findViewById(R.id.haveAccount_tw);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Обработка...");
         mAuth = FirebaseAuth.getInstance();
-        mRegisterBtn.setOnClickListener(new View.OnClickListener() {
+
+        mNotHaveAccountTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                finish();
+            }
+        });
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = mEmailET.getText().toString().trim();
@@ -64,47 +69,33 @@ public class RegisterActivity extends AppCompatActivity {
                     mPassET.setFocusable(true);
                 }
                 else {
-                    registerUser(email, password);
+                    loginUser(email, password);
                 }
             }
         });
-        mHaveAccountTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                finish();
-            }
-        });
     }
-    private void registerUser(String email, String password) {
+    private void loginUser(String email, String password){
         progressDialog.show();
-        mAuth.createUserWithEmailAndPassword(email,password)
+        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             FirebaseUser user = mAuth.getCurrentUser();
                             progressDialog.dismiss();
-                            Toast.makeText(RegisterActivity.this, "Registered!", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(RegisterActivity.this, ProfileActivity.class));
+                            startActivity(new Intent(LoginActivity.this, ProfileActivity.class));
                             finish();
-                        } else {
+                        }
+                        else {
                             progressDialog.dismiss();
-                            Toast.makeText(RegisterActivity.this, "Authentication failed",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Authorization failed", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        progressDialog.dismiss();
-                        Toast.makeText(RegisterActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
-    }
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return super.onSupportNavigateUp();
     }
 }
