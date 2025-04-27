@@ -1,18 +1,19 @@
 package com.example.kursach;
 
 import android.os.Bundle;
-import android.util.Log;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,18 +26,10 @@ import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
+ * Use the {@link GroupFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileFragment extends Fragment {
-
-    FirebaseAuth firebaseAuth;
-    FirebaseUser user;
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
-    ImageView avatarIv;
-    TextView nameTv, emailTv, phoneTv;
-
+public class GroupFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -47,7 +40,14 @@ public class ProfileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public ProfileFragment() {
+    FirebaseAuth firebaseAuth;
+    FirebaseUser user;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
+    ImageView avatarIv;
+    TextView nameTv, skillTv, usersTv;
+    String groupForSearchName;
+    public GroupFragment() {
         // Required empty public constructor
     }
 
@@ -57,11 +57,11 @@ public class ProfileFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
+     * @return A new instance of fragment Group.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
+    public static GroupFragment newInstance(String param1, String param2) {
+        GroupFragment fragment = new GroupFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -73,45 +73,60 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            groupForSearchName = getArguments().getString("groupNameKey");
+            //mParam1 = getArguments().getString(ARG_PARAM1);
+            //mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_group, container, false);
 
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("Users");
+        databaseReference = firebaseDatabase.getReference("Groups");
 
         avatarIv = view.findViewById(R.id.avatarIv);
         nameTv = view.findViewById(R.id.nameTv);
-        emailTv = view.findViewById(R.id.emailTV);
-        phoneTv = view.findViewById(R.id.phoneTV);
+        skillTv = view.findViewById(R.id.skillTv);
+        usersTv = view.findViewById(R.id.usersTv);
+        usersTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GroupUsersFragment groupFragment = new GroupUsersFragment();
+                Bundle args = new Bundle();
+                args.putString("groupNameKey", nameTv.getText().toString());
 
+                groupFragment.setArguments(args);
+
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.content, groupFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
 
         // ЗАПРОС
-        Log.d("DEBUG FUCK", user.getEmail());
-        Query query = databaseReference.orderByChild("email");
+        Query query = databaseReference.orderByChild("name");
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Log.d("DEBUG FUCK", "Children count: " + snapshot.getChildrenCount());
                 Log.d("DEBUG FUCK", "Request maked");
                 for (DataSnapshot ds : snapshot.getChildren()){
-                    String email = "" + ds.child("email").getValue();
-                    if (email.equals(user.getEmail())) {
+                    String GroupName = "" + ds.child("name").getValue();
+                    if (GroupName.equals(groupForSearchName)) {
                         String name = "" + ds.child("name").getValue();
-                        String phone = "" + ds.child("phone").getValue();
+                        String skill = "" + ds.child("skill").getValue();
                         String image = "" + ds.child("image").getValue();
 
                         nameTv.setText(name);
-                        emailTv.setText(email);
-                        phoneTv.setText(phone);
+                        skillTv.setText(skill);
 
                         try {
                             Picasso.get().load(image).into(avatarIv);

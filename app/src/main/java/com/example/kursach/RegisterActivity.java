@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -86,13 +87,13 @@ public class RegisterActivity extends AppCompatActivity {
 
                             String email = user.getEmail();
                             String uid = user.getUid();
-
                             HashMap<Object, String> hashMap = new HashMap<>();
                             hashMap.put("email", email);
                             hashMap.put("uid", uid);
                             hashMap.put("name", "");
                             hashMap.put("phone", "");
                             hashMap.put("image", "");
+                            hashMap.put("groups", "");
 
                             FirebaseDatabase db = FirebaseDatabase.getInstance();
 

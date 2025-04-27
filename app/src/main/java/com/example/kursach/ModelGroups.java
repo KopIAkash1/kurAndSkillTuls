@@ -1,16 +1,20 @@
 package com.example.kursach;
 
+import java.util.List;
+
 public class ModelGroups {
     String name, image, skill;
+    List<ModelUser> usersList;
 
     public ModelGroups(){
 
     }
 
-    public ModelGroups(String name, String image, String skill){
+    public ModelGroups(String name, String image, String skill, List<ModelUser> UsersList){
         this.name = name;
         this.image = image;
         this.skill = skill;
+        this.usersList = UsersList;
     }
 
     public String getName() {
