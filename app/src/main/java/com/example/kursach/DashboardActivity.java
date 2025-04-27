@@ -1,5 +1,6 @@
 package com.example.kursach;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -101,6 +102,9 @@ public class DashboardActivity extends AppCompatActivity {
         if (id == R.id.action_logout){
             mAuth.signOut();
             checkUserStatus();
+        }
+        if (id == R.id.action_add_post){
+            startActivity(new Intent(this, AddPostActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
