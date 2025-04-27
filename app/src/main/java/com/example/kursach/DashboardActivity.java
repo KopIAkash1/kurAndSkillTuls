@@ -60,7 +60,7 @@ public class DashboardActivity extends AppCompatActivity {
                         return true;
                     }
                     else if (item.getItemId() == R.id.nav_friends){
-                        actionBar.setTitle("Друзья");
+                        actionBar.setTitle("Сообщества");
                         FriendsFragment fragment3 = new FriendsFragment();
                         FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
                         ft3.replace(R.id.content, fragment3,"");
