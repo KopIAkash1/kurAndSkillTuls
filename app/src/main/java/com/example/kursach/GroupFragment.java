@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,6 +52,7 @@ public class GroupFragment extends Fragment {
     ImageView avatarIv;
     TextView nameTv, skillTv, usersTv;
     Button requestButton;
+    ModelUser modelUser;
     String groupForSearchName;
     public GroupFragment() {
         // Required empty public constructor
@@ -98,6 +102,22 @@ public class GroupFragment extends Fragment {
         skillTv = view.findViewById(R.id.skillTv);
         usersTv = view.findViewById(R.id.usersTv);
         requestButton = view.findViewById(R.id.requestButton);
+
+        requestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap <Object,String> data = new HashMap<>();
+                data.put("groupName", groupForSearchName);
+                data.put("userName", modelUser.getName());
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Requests");
+                ref.child(modelUser.getUid()).setValue(data).addOnSuccessListener(unused ->
+                        Toast.makeText(getContext(), "Данные отправлены", Toast.LENGTH_SHORT).show()
+                ).addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "Ошибка отправки запроса", Toast.LENGTH_SHORT).show()
+                );
+            }
+        });
+
         usersTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,7 +141,7 @@ public class GroupFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()){
-                    ModelUser modelUser = ds.getValue(ModelUser.class);
+                    modelUser = ds.getValue(ModelUser.class);
                     if (modelUser.getGroups().contains(groupForSearchName)){
                         requestButton.setVisibility(View.GONE);
                     }
