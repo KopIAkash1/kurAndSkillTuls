@@ -4,10 +4,13 @@ import android.os.Bundle;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +26,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ProfileFragment#newInstance} factory method to
@@ -36,8 +42,9 @@ public class ProfileFragment extends Fragment {
     DatabaseReference databaseReference;
     ImageView avatarIv;
     TextView nameTv, emailTv, phoneTv;
-
-
+    RecyclerView recyclerView;
+    List<ModelRequest> requestList;
+    AdapterRequests adapterRequests;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -92,10 +99,9 @@ public class ProfileFragment extends Fragment {
         nameTv = view.findViewById(R.id.nameTv);
         emailTv = view.findViewById(R.id.emailTV);
         phoneTv = view.findViewById(R.id.phoneTV);
-
+        recyclerView = view.findViewById(R.id.recyclerView);
 
         // ЗАПРОС
-        Log.d("DEBUG FUCK", user.getEmail());
         Query query = databaseReference.orderByChild("email");
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -112,7 +118,9 @@ public class ProfileFragment extends Fragment {
                         nameTv.setText(name);
                         emailTv.setText(email);
                         phoneTv.setText(phone);
-
+                        if(!ds.child("groups").getValue().toString().contains("Админы")){
+                            recyclerView.setVisibility(View.GONE);
+                        }
                         try {
                             Picasso.get().load(image).into(avatarIv);
                         } catch (Exception e) {
@@ -127,6 +135,37 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        requestList = new ArrayList<>();
+
+        getAllRequests();
+
         return view;
+    }
+
+    private void getAllRequests() {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Requests"); // <---
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                requestList.clear();
+                for (DataSnapshot ds: snapshot.getChildren()){
+                    ModelRequest modelRequest = ds.getValue(ModelRequest.class);
+                    requestList.add(modelRequest);
+                }
+                adapterRequests = new AdapterRequests(getActivity(), requestList);
+                recyclerView.setAdapter(adapterRequests);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

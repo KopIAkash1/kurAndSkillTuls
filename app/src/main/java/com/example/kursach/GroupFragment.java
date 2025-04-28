@@ -109,6 +109,7 @@ public class GroupFragment extends Fragment {
                 HashMap <Object,String> data = new HashMap<>();
                 data.put("groupName", groupForSearchName);
                 data.put("userName", modelUser.getName());
+                data.put("userImage", modelUser.getImage());
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Requests");
                 ref.child(modelUser.getUid()).setValue(data).addOnSuccessListener(unused ->
                         Toast.makeText(getContext(), "Данные отправлены", Toast.LENGTH_SHORT).show()
