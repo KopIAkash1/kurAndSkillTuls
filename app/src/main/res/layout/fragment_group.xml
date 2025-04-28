@@ -67,6 +67,13 @@
         </LinearLayout>
 
     </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="260dp"
+        android:padding="16dp"
+        android:clipToPadding="false"/>
     <Button
         android:id="@+id/addPostButton"
         android:layout_gravity="bottom|center_horizontal"
@@ -76,4 +83,5 @@
         style="@style/Base.Widget.AppCompat.Button.Colored"
         android:text="Запостить от имени группы"
         android:visibility="gone"/>
+
 </FrameLayout>

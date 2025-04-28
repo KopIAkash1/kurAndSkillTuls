@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +29,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,7 +49,9 @@ public class GroupFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     String groups;
-
+    RecyclerView recyclerView;
+    List<ModelPost> postsList;
+    AdapterPosts adapterPosts;
     FirebaseAuth firebaseAuth;
     FirebaseUser user;
     FirebaseDatabase firebaseDatabase;
@@ -198,6 +204,37 @@ public class GroupFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        recyclerView = view.findViewById(R.id.recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true);
+
+        recyclerView.setLayoutManager(layoutManager);
+
+
+        postsList = new ArrayList<>();
+        loadPosts();
         return view;
+    }
+    private void loadPosts(){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                postsList.clear();
+                for (DataSnapshot ds: snapshot.getChildren()){
+                    ModelPost modelPost = ds.getValue(ModelPost.class);
+                    if (modelPost.uName.equals(nameTv.getText().toString())) {
+                        postsList.add(modelPost);
+                        adapterPosts = new AdapterPosts(getActivity(), postsList);
+                        recyclerView.setAdapter(adapterPosts);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 }
