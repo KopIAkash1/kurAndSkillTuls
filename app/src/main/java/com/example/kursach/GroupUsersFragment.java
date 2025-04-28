@@ -98,7 +98,7 @@ public class GroupUsersFragment extends Fragment {
                         usersList.add(modelUser);
                     }
                 }
-                adapterUsers = new AdapterUsers(getActivity(), usersList);
+                adapterUsers = new AdapterUsers(getActivity(), usersList, groupForSearchName);
                 recyclerView.setAdapter(adapterUsers);
             }
 
