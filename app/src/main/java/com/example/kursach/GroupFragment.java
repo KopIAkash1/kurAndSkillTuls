@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,13 +40,15 @@ public class GroupFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    String groups;
 
     FirebaseAuth firebaseAuth;
     FirebaseUser user;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReference, userDbRef;
     ImageView avatarIv;
     TextView nameTv, skillTv, usersTv;
+    Button requestButton;
     String groupForSearchName;
     public GroupFragment() {
         // Required empty public constructor
@@ -94,6 +97,7 @@ public class GroupFragment extends Fragment {
         nameTv = view.findViewById(R.id.nameTv);
         skillTv = view.findViewById(R.id.skillTv);
         usersTv = view.findViewById(R.id.usersTv);
+        requestButton = view.findViewById(R.id.requestButton);
         usersTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,13 +115,30 @@ public class GroupFragment extends Fragment {
             }
         });
 
-        // ЗАПРОС
-        Query query = databaseReference.orderByChild("name");
+        userDbRef = FirebaseDatabase.getInstance().getReference("Users");
+        Query query = userDbRef.orderByChild("email").equalTo(user.getEmail());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d("DEBUG FUCK", "Children count: " + snapshot.getChildrenCount());
-                Log.d("DEBUG FUCK", "Request maked");
+                for (DataSnapshot ds: snapshot.getChildren()){
+                    ModelUser modelUser = ds.getValue(ModelUser.class);
+                    if (modelUser.getGroups().contains(groupForSearchName)){
+                        requestButton.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        // ЗАПРОС
+        query = databaseReference.orderByChild("name");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()){
                     String GroupName = "" + ds.child("name").getValue();
                     if (GroupName.equals(groupForSearchName)) {
@@ -142,6 +163,7 @@ public class GroupFragment extends Fragment {
 
             }
         });
+
         return view;
     }
 }
