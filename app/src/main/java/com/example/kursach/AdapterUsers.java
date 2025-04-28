@@ -53,8 +53,26 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder> {
         holder.mNameTv.setText(name);
         holder.mEmailTv.setText(email);
         holder.mPhoneTv.setText(phone);
-        holder.mRemoveBtn.setText("Удалить");
-        holder.mRemoveBtn.setVisibility(View.VISIBLE);
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users"); // <---
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    ModelUser modelUser = ds.getValue(ModelUser.class);
+                    if (modelUser.getGroups().toString().contains("Админы") && modelUser.getUid().equals(firebaseUser.getUid())){
+                        holder.mRemoveBtn.setText("Удалить");
+                        holder.mRemoveBtn.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         try{
             Picasso.get().load(image).placeholder(R.drawable.ic_default_group).into(holder.mAvatarIv);
         }
