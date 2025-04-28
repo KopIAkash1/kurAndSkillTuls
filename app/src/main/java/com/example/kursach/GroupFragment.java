@@ -1,5 +1,6 @@
 package com.example.kursach;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -51,9 +52,10 @@ public class GroupFragment extends Fragment {
     DatabaseReference databaseReference, userDbRef;
     ImageView avatarIv;
     TextView nameTv, skillTv, usersTv;
-    Button requestButton;
+    Button requestButton, addPostButton;
     ModelUser modelUser;
     String groupForSearchName;
+    String image;
     public GroupFragment() {
         // Required empty public constructor
     }
@@ -102,7 +104,7 @@ public class GroupFragment extends Fragment {
         skillTv = view.findViewById(R.id.skillTv);
         usersTv = view.findViewById(R.id.usersTv);
         requestButton = view.findViewById(R.id.requestButton);
-
+        addPostButton = view.findViewById(R.id.addPostButton);
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,6 +148,9 @@ public class GroupFragment extends Fragment {
                     if (modelUser.getGroups().contains(groupForSearchName)){
                         requestButton.setVisibility(View.GONE);
                     }
+                    if (modelUser.getGroups().contains("Админы")){
+                        addPostButton.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -165,7 +170,7 @@ public class GroupFragment extends Fragment {
                     if (GroupName.equals(groupForSearchName)) {
                         String name = "" + ds.child("name").getValue();
                         String skill = "" + ds.child("skill").getValue();
-                        String image = "" + ds.child("image").getValue();
+                        image = "" + ds.child("image").getValue();
 
                         nameTv.setText(name);
                         skillTv.setText(skill);
@@ -184,7 +189,15 @@ public class GroupFragment extends Fragment {
 
             }
         });
-
+        addPostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AddPostCommunityActivity.class);
+                intent.putExtra("groupName",nameTv.getText().toString());
+                intent.putExtra("groupDp",image);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 }

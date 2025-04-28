@@ -67,5 +67,13 @@
         </LinearLayout>
 
     </LinearLayout>
-
+    <Button
+        android:id="@+id/addPostButton"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
+        android:text="Запостить от имени группы"
+        android:visibility="gone"/>
 </FrameLayout>
