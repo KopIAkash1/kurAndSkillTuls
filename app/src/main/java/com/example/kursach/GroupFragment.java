@@ -1,10 +1,15 @@
 package com.example.kursach;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -124,6 +129,7 @@ public class GroupFragment extends Fragment {
                 ).addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Ошибка отправки запроса", Toast.LENGTH_SHORT).show()
                 );
+                sendLocalNotification(getContext(), "Статус запроса", "Ожидает подтверждения");
             }
         });
 
@@ -237,4 +243,26 @@ public class GroupFragment extends Fragment {
             }
         });
     }
+    private void sendLocalNotification(Context context, String title, String message) {
+        String channelId = "default_channel_id";
+        String channelName = "Default Channel";
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Создание канала уведомлений (для Android 8+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.mipmap.ic_icon_round) // твоя иконка
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        notificationManager.notify(1, builder.build()); // 1 — это ID уведомления
+    }
+
 }
