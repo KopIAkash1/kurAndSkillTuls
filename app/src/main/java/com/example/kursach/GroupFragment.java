@@ -248,21 +248,19 @@ public class GroupFragment extends Fragment {
         String channelName = "Default Channel";
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Создание канала уведомлений (для Android 8+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(R.mipmap.ic_icon_round) // твоя иконка
+                .setSmallIcon(R.mipmap.ic_icon_round)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
 
-        notificationManager.notify(1, builder.build()); // 1 — это ID уведомления
+        notificationManager.notify(1, builder.build());
     }
 
 }
