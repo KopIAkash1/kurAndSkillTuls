@@ -71,7 +71,7 @@ public class AdapterRequests extends RecyclerView.Adapter<AdapterRequests.MyHold
                                 if(!modelUser.getGroups().equals(holder.mGroup.getText().toString())){
                                     String uid = modelUser.getUid();
                                     DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(uid);
-                                    userRef.child("groups").setValue(modelUser.getGroups()+groupName.replace("Запрос на вступление в ", ""))
+                                    userRef.child("groups").setValue(modelUser.getGroups()+groupName.replace("Запрос на вступление в ", ", "))
                                             .addOnSuccessListener(aVoid -> {
                                                 Toast.makeText(context, "Группа обновлена", Toast.LENGTH_SHORT).show();
                                             })

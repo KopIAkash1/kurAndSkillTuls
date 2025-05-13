@@ -83,6 +83,8 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder> {
         holder.mRemoveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int pos = holder.getAdapterPosition();
+                if (pos == RecyclerView.NO_POSITION) return;
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users"); // <---
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -93,11 +95,11 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder> {
                             if (holder.mNameTv.getText().toString().equals(modelUser.getName())) {
                                 String uid = modelUser.getUid();
                                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(uid);
-                                userRef.child("groups").setValue(modelUser.getGroups().replace(groupName, ""))
+                                userRef.child("groups").setValue(modelUser.getGroups().replace(", "+groupName,"").replace(groupName, ""))
                                         .addOnSuccessListener(aVoid -> {
                                             Toast.makeText(context, "Пользователь удален из группы", Toast.LENGTH_SHORT).show();
-                                            notifyItemRemoved(position);
-                                            notifyItemRangeChanged(position,usersList.size());
+                                            notifyItemRemoved(pos);
+                                            notifyItemRangeChanged(pos,usersList.size());
                                         })
                                         .addOnFailureListener(e -> {
                                             Toast.makeText(context, "Ошибка удаления", Toast.LENGTH_SHORT).show();
